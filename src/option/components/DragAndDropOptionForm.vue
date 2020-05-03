@@ -1,7 +1,9 @@
 <template>
   <div class="panel">
     <header class="panel-section panel-section-header">
-      <div class="icon-section-header"><!-- An image goes here. --></div>
+      <div class="icon-section-header">
+        <img src="drag-to-go-plus-48.png" alt="" style="height: 36px">
+      </div>
       <div class="text-section-header">Drag To Go +</div>
     </header>
     <div class="panel-section panel-section-tabs">

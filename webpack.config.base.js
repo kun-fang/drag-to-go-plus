@@ -49,6 +49,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "option/option.html",
       filename: "option.html",
+      chunks: ["option"]
     }),
     new CopyWebpackPlugin([{
       from: "./config.json",

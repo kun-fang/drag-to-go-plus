@@ -31,3 +31,14 @@ export const StageType = Object.freeze({
   IN_FOREGROUND: "in_foreground",
   IN_BACKGROUND: "in_background"
 });
+
+export async function getSearchEngines() {
+  let searchEngines = await browser.search.get();
+  return searchEngines.map(engine => {
+    engine.display = engine.name
+    if (engine.isDefault) {
+      engine.display = `${engine.name} (Default)`
+    }
+    return engine;
+  })
+}

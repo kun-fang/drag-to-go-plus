@@ -2,13 +2,14 @@
   <div id="option-app">
     <drag-and-drop-option-form id="option-form"
         :option="option"
-        @save="saveOptions($event)"></drag-and-drop-option-form>
+        @save="saveOptions($event)"
+        @reset="resetOptions()"></drag-and-drop-option-form>
   </div>
 </template>
 
 <script>
 import DragAndDropOptionForm from './DragAndDropOptionForm.vue'
-import { saveDragAndDropOptions, readDragAndDropOptions } from '../../common/optionStorage.js'
+import { saveDragAndDropOptions, readDragAndDropOptions, removeDragAndDropOptions } from '../../common/optionStorage.js'
 
 export default {
   data: function () {
@@ -22,6 +23,11 @@ export default {
   methods: {
     saveOptions: async function(option) {
       return await saveDragAndDropOptions(option);
+    },
+
+    resetOptions: async function() {
+      await removeDragAndDropOptions();
+      this.option = await readDragAndDropOptions();
     }
   },
   mounted: async function() {

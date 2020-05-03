@@ -19,7 +19,7 @@ browser.runtime.onMessage.addListener(async (data) => {
 
     }
   }
-  let targets = allTargetTypes.filter(type => !!data[type.name]);
+  let targets = allTargetTypes.slice().reverse().filter(type => !!data[type.name]);
   if (targets.length == 0) {
     return;
   }

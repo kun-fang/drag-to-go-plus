@@ -18,6 +18,7 @@ import { allDirections, directionGroupMap } from '../../common/direction.js';
 import { ActionGroup } from '../../common/actions.js'
 import ActionSelection from './ActionSelection.vue'
 import { gestureSettingTitle } from '../../common/display';
+import { getSearchEngines } from '../../common/constants';
 export default {
   components: {
     "action-select": ActionSelection
@@ -50,14 +51,7 @@ export default {
     }
   },
   mounted: async function() {
-    let searchEngines = await browser.search.get();
-    this.searchEngines = searchEngines.map(engine => {
-      engine.display = engine.name
-      if (engine.isDefault) {
-        engine.display = `${engine.name} (Default)`
-      }
-      return engine;
-    })
+    this.searchEngines = await getSearchEngines();
   }
 }
 </script>

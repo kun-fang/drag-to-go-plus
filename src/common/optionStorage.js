@@ -1,4 +1,4 @@
-import { storageKey, optionVersion, version, textToUrl, openToNext } from './constants.js'
+import { storageKey, optionVersion, version, textToUrl, openToNext, getSearchEngines } from './constants.js'
 import { directionGroupMap, na } from './direction.js';
 import { actionGroupMap, actionMap } from './actions.js';
 import { allTargetTypes } from './target.js';
@@ -18,14 +18,16 @@ function createOptions(options) {
 function createTargetOption(target, option) {
   let data = {};
   let directionGroup = directionGroupMap[option.mode];
-  data.mode = option.mode || na.name;
-  data.actions = {};
-  directionGroup.directions.forEach(direction => {
-    const directionOption = createDirectionOption(target, option.actions[direction.name] || {});
-    if (!!directionOption) {
-      data.actions[direction.name] = directionOption;
-    }
-  });
+  if (!!directionGroup) {
+    data.mode = option.mode || na.name;
+    data.actions = {};
+    directionGroup.directions.forEach(direction => {
+      const directionOption = createDirectionOption(target, option.actions[direction.name] || {});
+      if (!!directionOption) {
+        data.actions[direction.name] = directionOption;
+      }
+    });
+  }
   return data;
 }
 
@@ -65,13 +67,15 @@ function getTargetOptions(target, data) {
     mode: data.mode,
     actions: {}
   };
-  let directionGroup = directionGroupMap[data.mode];
-  directionGroup.directions.forEach(direction => {
-    let action = data.actions[direction.name];
-    if (!!action) {
-      options.actions[direction.name] = getDirectionOptions(target, data.actions[direction.name]);
-    }
-  });
+  if (!!data.mode) {
+    let directionGroup = directionGroupMap[data.mode];
+    directionGroup.directions.forEach(direction => {
+      let action = data.actions[direction.name];
+      if (!!action) {
+        options.actions[direction.name] = getDirectionOptions(target, data.actions[direction.name]);
+      }
+    });
+  }
   return options;
 }
 
@@ -93,6 +97,51 @@ function getDirectionOptions(target, data) {
 
 export async function readDragAndDropOptions() {
   let storage = await browser.storage.sync.get(storageKey);
-  let data = storage[storageKey] || {};
+  let data = storage[storageKey] || await getDefaultOption();
   return getOptions(data);
+}
+
+export async function removeDragAndDropOptions() {
+  return await browser.storage.sync.remove(storageKey);
+}
+
+async function getDefaultOption() {
+  let engines = await getSearchEngines();
+  let defaultEngines = engines.filter(engine => engine.isDefault);
+  let textOption = defaultEngines.length > 0
+    ? {
+      mode: "any",
+      actions: {
+        any: {
+          action: "search_text",
+          stage: "in_foreground",
+          engine: defaultEngines[0].name
+        }
+      }
+    }
+    : {
+      mode: "na",
+      actions: {}
+    };
+  return {
+    text: textOption,
+    anchor: {
+      mode: "any",
+      actions: {
+        any: {
+          action: "open_link",
+          stage: "in_foreground"
+        }
+      }
+    },
+    image: {
+      mode: "any",
+      actions: {
+        any:{
+          action: "open_image",
+          stage: "in_foreground"
+        }
+      }
+    }
+  };
 }

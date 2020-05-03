@@ -45,11 +45,13 @@ export const upDown = new DirectionGroup(
   [up, down],
   "up-down-icon.png",
   (data) => data[toY] <= data[fromY] ? up : down);
+  
 export const leftRight = new DirectionGroup(
   "left-right",
   [left, right],
   "left-right-icon.png",
   (data) => data[toX] <= data[fromX] ? left : right);
+
 export const fourDirections = new DirectionGroup(
   "four-directions",
   [up, down, left, right],
