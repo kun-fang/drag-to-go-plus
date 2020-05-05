@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --env=dev",
-    "release": "webpack --env=prod",
+    "release": "webpack --env=prod && web-ext build -s release -a artifacts -o",
     "debug": "web-ext run -s build",
+    "lint": "web-ext lint -s build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "kuangkuang",

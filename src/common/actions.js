@@ -3,16 +3,34 @@ import { TargetType, ImageAction } from './constants.js'
 async function openTab(currentTab, url, openInBackground=false, openTabNext=false) {
   let active = !openInBackground;
   let index = openTabNext ? currentTab.index + 1 : undefined;
-  return await browser.tabs.create({
+  let newTab = await browser.tabs.create({
     active: active,
     index: index,
-    openerTabId: currentTab.id,
-    url: url
+    url: "extension.html"
   });
+
+  async function loadUrlInTab() {
+    return await browser.tabs.sendMessage(newTab.id, {
+      type: "openUrl",
+      url: url
+    });
+  }
+
+  browser.webNavigation.onCompleted.removeListener(loadUrlInTab);
+
+  browser.webNavigation.onCompleted.addListener(loadUrlInTab, {
+    url: [
+      {
+        urlMatches: "^moz-extension://[0-9a-f-]{36}/extension.html$"
+      }
+    ]
+  })
 }
 
 async function downloadFile(url) {
-  return await browser.downloads.download({
+  let currentTab = await browser.tabs.query({active: true});
+  return await browser.tabs.sendMessage(currentTab[0].id, {
+    type: "download",
     url: url
   });
 }
@@ -42,9 +60,15 @@ async function copyToClipboard(content) {
 }
 
 async function saveText(content) {
-  let data = new Blob([content], {type: 'text/plain'});
-  let url = URL.createObjectURL(data);
-  return await downloadFile(url);
+  return await downloadFile(`data:text/plain,${content}`);
+}
+
+async function findInPage(content) {
+  let currentTab = await browser.tabs.query({active: true});
+  return await browser.tabs.sendMessage(currentTab[0].id, {
+    type: "findText",
+    text: content
+  });
 }
 
 export const actionMap = {};
@@ -163,6 +187,16 @@ const saveTextAction = new Action({
   display: () => "Save As a Text File"
 })
 
+const findTextInPage = new Action({
+  name: "find_text",
+  openNewTab: false,
+  isSearch: false,
+  apply: function(currentTab, content, options) {
+    return findInPage(content);
+  },
+  display: () => "Find and Highlight the Text in Page"
+})
+
 const anchorActions = new ActionGroup({
   target: TargetType.ANCHOR,
   actions: [openLinkAction, saveLinkAction],
@@ -179,7 +213,7 @@ const imageActions = new ActionGroup({
 
 const textActions = new ActionGroup({
   target: TargetType.TEXT,
-  actions: [textSearchAction, copyTextAction, saveTextAction],
+  actions: [textSearchAction, copyTextAction, saveTextAction, findTextInPage],
   showEngine: true,
   display: () => "Text"
 });

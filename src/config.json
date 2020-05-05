@@ -1,5 +1,6 @@
 {
   "name": "Drag To Go +",
+  "minVersion": "63.0",
   "icons": {
     "48": "drag-to-go-plus-48.png",
     "96": "drag-to-go-plus-96.png"
@@ -12,7 +13,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["content.js", "contentActions.js"]
     }
   ],
   "options_ui": {
@@ -26,10 +27,11 @@
     "downloads",
     "tabs",
     "search",
-    "storage"
+    "storage",
+    "webNavigation"
   ],
   "csp": [
-    "script-src 'self' 'unsafe-eval'",
+    "script-src 'self'",
     "object-src 'self'",
     "img-src 'self' data:"
   ]

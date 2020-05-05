@@ -20,6 +20,7 @@ module.exports = {
   },
   entry: {
     content: './content/content.js',
+    contentActions: './content/contentActions.js',
     background: './background/background.js',
     option: './option/option.js'
   },
@@ -50,6 +51,11 @@ module.exports = {
       template: "option/option.html",
       filename: "option.html",
       chunks: ["option"]
+    }),
+    new HtmlWebpackPlugin({
+      template: "html/extension.html",
+      filename: "extension.html",
+      chunks: ["contentActions"]
     }),
     new CopyWebpackPlugin([{
       from: "./config.json",
