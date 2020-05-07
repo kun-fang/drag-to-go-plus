@@ -34,5 +34,8 @@
     "script-src 'self'",
     "object-src 'self'",
     "img-src 'self' data:"
+  ],
+  "web_accessible_resources": [
+    "extension.html"
   ]
 }

@@ -24,7 +24,10 @@ export const ActionType = Object.freeze({
   OPEN_IMAGE: "open_image",
   SAVE_LINK: "save_link",
   SAVE_IMAGE: "save_image",
-  SEARCH_TEXT: "search_text"
+  SEARCH_TEXT: "search_text",
+  SAVE_TEXT: "save_text",
+  COPY_TEXT: "copy_text",
+  FIND_IN_PAGE: "find_in_page"
 });
 
 export const StageType = Object.freeze({

@@ -1,75 +1,5 @@
-import { TargetType, ImageAction } from './constants.js'
-
-async function openTab(currentTab, url, openInBackground=false, openTabNext=false) {
-  let active = !openInBackground;
-  let index = openTabNext ? currentTab.index + 1 : undefined;
-  let newTab = await browser.tabs.create({
-    active: active,
-    index: index,
-    url: "extension.html"
-  });
-
-  async function loadUrlInTab() {
-    return await browser.tabs.sendMessage(newTab.id, {
-      type: "openUrl",
-      url: url
-    });
-  }
-
-  browser.webNavigation.onCompleted.removeListener(loadUrlInTab);
-
-  browser.webNavigation.onCompleted.addListener(loadUrlInTab, {
-    url: [
-      {
-        urlMatches: "^moz-extension://[0-9a-f-]{36}/extension.html$"
-      }
-    ]
-  })
-}
-
-async function downloadFile(url) {
-  let currentTab = await browser.tabs.query({active: true});
-  return await browser.tabs.sendMessage(currentTab[0].id, {
-    type: "download",
-    url: url
-  });
-}
-
-async function search(currentTab, query, engine, searchInBackground=false, openTabNext=false) {
-  let index = openTabNext ? currentTab.index + 1 : undefined;
-  let newTab = await browser.tabs.create({
-    index: index,
-    openerTabId: currentTab.id,
-    active: false
-  });
-  return await browser.search.search({
-    query: query,
-    engine: engine,
-    tabId: newTab.id
-  }).then(() => {
-    if (!searchInBackground) {
-      return browser.tabs.update(newTab.id, {
-        active: true
-      });
-    }
-  });
-}
-
-async function copyToClipboard(content) {
-  return await navigator.clipboard.writeText(content);
-}
-
-async function saveText(content) {
-  return await downloadFile(`data:text/plain,${content}`);
-}
-
-async function findInPage(content) {
-  let currentTab = await browser.tabs.query({active: true});
-  return await browser.tabs.sendMessage(currentTab[0].id, {
-    type: "findText",
-    text: content
-  });
-}
+import { ActionType, TargetType, StageType } from './constants.js'
+import { actionScriptMap } from './actionScript.js';
 
 export const actionMap = {};
 
@@ -78,13 +8,15 @@ export class Action {
     this.name = action.name;
     this.openNewTab = action.openNewTab || false;
     this.isSearch = action.isSearch || false;
-    this.applyFunction = action.apply;
+    this.actionScript = action.actionScript;
     this.displayFunction = action.display;
     actionMap[this.name] = this;
   }
 
   apply(currentTab, content, options) {
-    return this.applyFunction(currentTab, content, options);
+    if (!!this.actionScript) {
+      return this.actionScript.backgroundAction(currentTab, content, options);
+    }
   }
 
   display() {
@@ -117,84 +49,67 @@ class ActionStage {
 
 const noAction = new Action({
   name: "",
-  apply: (currentTab, content, options) => undefined,
   display: () => "Do Nothing"
 })
 
 const openLinkAction = new Action({
-  name: "open_link",
+  name: ActionType.OPEN_LINK,
   openNewTab: true,
-  apply: function(currentTab, content, options) {
-    return openTab(currentTab, content, options.openInBackground, options.openTabNext);
-  },
+  actionScript: actionScriptMap[ActionType.OPEN_LINK],
   display: () => "Open the Link"
 });
 
 const saveLinkAction = new Action ({
-  name: "save_link",
+  name: ActionType.SAVE_LINK,
   openNewTab: false,
-  apply: function(currentTab, content, options) {
-    return downloadFile(content);
-  },
+  actionScript: actionScriptMap[ActionType.SAVE_LINK],
   display : () => "Save the Link"
 });
 
 const openImageAction = new Action({
-  name: "open_image",
+  name: ActionType.OPEN_IMAGE,
   openNewTab: true,
-  apply: function(currentTab, content, options) {
-    return openTab(currentTab, content, options.openInBackground, options.openTabNext);
-  },
+  actionScript: actionScriptMap[ActionType.OPEN_LINK],
   display: () => "Open the Image"
 });
 
 const saveImageAction = new Action({
-  name: "save_image",
+  name: ActionType.SAVE_IMAGE,
   openNewTab: false,
-  apply: function(currentTab, content, options) {
-    return downloadFile(content);
-  },
+  actionScript: actionScriptMap[ActionType.SAVE_LINK],
   display: () => "Save the Image"
 });
 
 const textSearchAction = new Action({
-  name: "search_text",
+  name: ActionType.SEARCH_TEXT,
   openNewTab: true,
   isSearch: true,
-  apply: function(currentTab, content, options) {
-    return search(currentTab, content, options.engine, options.openInBackground, options.openTabNext);
-  },
+  actionScript: actionScriptMap[ActionType.SEARCH_TEXT],
   display: () => "Search the Text"
 });
 
 const copyTextAction = new Action({
-  name: "copy_text",
+  name: ActionType.COPY_TEXT,
   openNewTab: false,
   isSearch: false,
-  apply: function(currentTab, content, options) {
-    return copyToClipboard(content);
-  },
+  actionScript: actionScriptMap[ActionType.COPY_TEXT],
   display: () => "Copy the Text"
 });
 
 const saveTextAction = new Action({
-  name: "save_text",
+  name: ActionType.SAVE_TEXT,
   openNewTab: false,
   isSearch: false,
-  apply: function(currentTab, content, options) {
-    return saveText(content);
-  },
+  actionScript: actionScriptMap[ActionType.SAVE_TEXT],
   display: () => "Save As a Text File"
 })
 
 const findTextInPage = new Action({
-  name: "find_text",
+  name: ActionType.FIND_IN_PAGE,
   openNewTab: false,
   isSearch: false,
-  apply: function(currentTab, content, options) {
-    return findInPage(content);
-  },
-  display: () => "Find and Highlight the Text in Page"
+  actionScript: actionScriptMap[ActionType.FIND_IN_PAGE],
+  display: () => "Find and Highlight the Text in Page (Experimental)"
 })
 
 const anchorActions = new ActionGroup({
@@ -219,12 +134,12 @@ const textActions = new ActionGroup({
 });
 
 const inForeground = new ActionStage({
-  name: "in_foreground",
+  name: StageType.IN_FOREGROUND,
   display: () => "in Foreground"
 });
 
 export const inBackground = new ActionStage({
-  name: "in_background",
+  name: StageType.IN_BACKGROUND,
   display: () => "in Background"
 });
 

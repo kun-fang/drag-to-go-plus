@@ -44,7 +44,8 @@ const manifestMappingConfig = [
         return csp.join("; ")
       }
     }
-  }
+  },
+  "web_accessible_resources"
 ]
 
 function generateManifestField(mapConfig, config, package) {
