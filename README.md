@@ -3,12 +3,15 @@ This is a re-work to my previous firefox addon [DragToGo](https://github.com/kun
 
 ## Screenshots
 * Options for text
+
 ![Text Options](/docs/screenshots/Screen_Shot_2.png)
 
 * Optinos for links
+
 ![Link Options](/docs/screenshots/Screen_Shot_3.png)
 
 * Options for images
+
 ![Image Options](/docs/screenshots/Screen_Shot_4.png)
 
 ## Supported Features:
