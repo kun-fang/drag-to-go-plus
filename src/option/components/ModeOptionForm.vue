@@ -1,6 +1,8 @@
 <template>
   <div class="panel-section panel-section-formElements">
-    <label>{{ title.display() }}</label>
+    <div class="panel-formElements-items">
+      <label>{{ title.display() }}</label>
+    </div>
     <div id="mode-select" class="panel-formElements-item">
       <template v-for="item in directionGroups">
         <input type="radio"

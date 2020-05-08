@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h3 style="text-align: center"><i>{{ title.display({target: targetMap[type].display()}) }}</i></h3>
-    <div>
+    <h4>{{ title.display({target: targetMap[type].display()}) }}</h4>
+    <div class="panel">
       <mode-option-form v-model="value.mode"></mode-option-form>
       <div class="panel-section-separator"></div>
       <action-option-form :mode="value.mode"
@@ -43,3 +43,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+.panel {
+  border: solid 1px grey;
+  border-radius: 0.4em;
+}
+</style>

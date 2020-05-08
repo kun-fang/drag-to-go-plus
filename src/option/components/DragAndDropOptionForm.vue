@@ -22,7 +22,6 @@
             v-if="selectedType === targetType.name"></target-option-form>
       </div>
     </div>
-    <div class="panel-section-separator"></div>
     <div class="panel-section panel-section-formElements">
       <div class="panel-formElements-item">
         <label>

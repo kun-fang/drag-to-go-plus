@@ -1,6 +1,8 @@
 <template>
-  <div style="padding-top: 10px">
-    <label>{{ title.display() }}</label>
+  <div class="panel-section panel-section-formElements">
+    <div class="panel-formElements-item">
+      <label>{{ title.display() }}</label>
+    </div>
     <div v-for="direction in directions"
         :key="direction.name">
         <action-select :direction="direction"
