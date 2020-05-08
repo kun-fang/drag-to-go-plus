@@ -77,11 +77,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.file-select {
-  height: 24px;
-  padding: 0;
-  width: 36px;
-  text-align: center;
-}
-</style>>

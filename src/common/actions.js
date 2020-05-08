@@ -109,7 +109,7 @@ const findTextInPage = new Action({
   openNewTab: false,
   isSearch: false,
   actionScript: actionScriptMap[ActionType.FIND_IN_PAGE],
-  display: () => "Find and Highlight the Text in Page (Experimental)"
+  display: () => "Find the Text in Page (Experimental)"
 })
 
 const bookmark = new Action({
