@@ -1,4 +1,4 @@
-import { ActionType } from './constants.js'
+import { ActionType, TargetType } from './constants.js'
 
 //#region openTab
 
@@ -116,6 +116,16 @@ async function findInPageInBackground(currentTab, content) {
 
 //#endregion findInPage
 
+//#region bookmark
+async function bookmarkUrlInBackend(url, title) {
+  return await browser.bookmarks.create({
+    url: url,
+    title: title
+  });
+}
+
+//#endregion bookmark
+
 export const actionScriptMap = {};
 
 class ActionScript {
@@ -173,3 +183,6 @@ const saveTextScript = new ActionScript(ActionType.SAVE_TEXT)
 const findInPageScript = new ActionScript(ActionType.FIND_IN_PAGE)
   .setContentScript(findInPageInContent)
   .setBackgroundScript((currentTab, content, options) => findInPageInBackground(currentTab, content));
+
+const bookmarkUrl = new ActionScript(ActionType.BOOKMARK_URL)
+  .setBackgroundScript((currentTab, content, options) => bookmarkUrlInBackend(content, options[TargetType.TEXT]));

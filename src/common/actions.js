@@ -112,9 +112,17 @@ const findTextInPage = new Action({
   display: () => "Find and Highlight the Text in Page (Experimental)"
 })
 
+const bookmark = new Action({
+  name: ActionType.BOOKMARK_URL,
+  openNewTab: false,
+  isSearch: false,
+  actionScript: actionScriptMap[ActionType.BOOKMARK_URL],
+  display: () => "Bookmark the Link"
+})
+
 const anchorActions = new ActionGroup({
   target: TargetType.ANCHOR,
-  actions: [openLinkAction, saveLinkAction],
+  actions: [openLinkAction, saveLinkAction, bookmark],
   showEngine: false,
   display: () => "Link"
 });

@@ -27,7 +27,8 @@ export const ActionType = Object.freeze({
   SEARCH_TEXT: "search_text",
   SAVE_TEXT: "save_text",
   COPY_TEXT: "copy_text",
-  FIND_IN_PAGE: "find_in_page"
+  FIND_IN_PAGE: "find_in_page",
+  BOOKMARK_URL: "bookmark_url"
 });
 
 export const StageType = Object.freeze({

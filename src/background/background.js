@@ -37,6 +37,7 @@ function processTarget(targetType, currentTab, data, options) {
     config.openInBackground = (dragOption.stage === inBackground.name);
     config.openTabNext = options[openToNext];
     config.engine = dragOption.engine;
+    Object.keys(data).forEach(key => config[key] = data[key]);
     if (!!action) {
       return action.apply(currentTab, content, config);
     }
