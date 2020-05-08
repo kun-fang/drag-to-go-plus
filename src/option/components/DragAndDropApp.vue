@@ -22,7 +22,8 @@ export default {
   },
   methods: {
     saveOptions: async function(option) {
-      return await saveDragAndDropOptions(option);
+      await saveDragAndDropOptions(option);
+      alert("Config Saved!");
     },
 
     resetOptions: async function() {
