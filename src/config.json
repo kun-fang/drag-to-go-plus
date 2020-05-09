@@ -26,6 +26,8 @@
     "bookmarks",
     "clipboardWrite",
     "downloads",
+    "management",
+    "notifications",
     "tabs",
     "search",
     "storage",

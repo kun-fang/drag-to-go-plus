@@ -49,6 +49,20 @@ function getDragDirection(data, mode) {
   return !!directionGroup ? directionGroup.getDirection(data) : undefined;
 }
 
+async function hintDisableOldAddOn() {
+  let addons = await browser.management.getAll();
+  let oldAddons = addons.filter(addon => addon.enabled && addon.name === "Drag To Go");
+  if (oldAddons.length > 0) {
+    await browser.notifications.create({
+      "type": "basic",
+      "iconUrl": browser.extension.getURL("drag-to-go-plus-48.png"),
+      "title": "Old DragToGo is found",
+      "message": "Please uninstall or disable the old \"Drag To Go\". It may affect functions of DragToGo+. "
+    });
+  }
+}
+
 browser.runtime.onInstalled.addListener(async function() {
   await browser.runtime.openOptionsPage();
+  await hintDisableOldAddOn();
 });
