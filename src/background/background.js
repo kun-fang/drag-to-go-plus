@@ -48,3 +48,7 @@ function getDragDirection(data, mode) {
   let directionGroup = directionGroupMap[mode];
   return !!directionGroup ? directionGroup.getDirection(data) : undefined;
 }
+
+browser.runtime.onInstalled.addListener(async function() {
+  await browser.runtime.openOptionsPage();
+});
