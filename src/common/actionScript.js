@@ -15,14 +15,13 @@ async function openTabInBackground(currentTab, url, openInBackground=false, open
     url: "extension.html"
   });
 
-  async function loadUrlInTab() {
-    return await browser.tabs.sendMessage(newTab.id, {
+  function loadUrlInTab() {
+    browser.tabs.sendMessage(newTab.id, {
       type: ActionType.OPEN_LINK,
       url: url
     });
+    browser.webNavigation.onCompleted.removeListener(loadUrlInTab);
   }
-
-  browser.webNavigation.onCompleted.removeListener(loadUrlInTab);
 
   browser.webNavigation.onCompleted.addListener(loadUrlInTab, {
     url: [
@@ -134,10 +133,6 @@ class ActionScript {
     this._contentFunction = undefined;
     this._backgroundFunction = undefined;
     actionScriptMap[this.name] = this;
-  }
-
-  static newActionScript(name) {
-    return new ActionScript(name);
   }
 
   setContentScript(func) {

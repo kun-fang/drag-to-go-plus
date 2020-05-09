@@ -62,7 +62,7 @@ async function hintDisableOldAddOn() {
   }
 }
 
-browser.runtime.onInstalled.addListener(async function() {
-  await browser.runtime.openOptionsPage();
-  await hintDisableOldAddOn();
+browser.runtime.onInstalled.addListener(function() {
+  browser.runtime.openOptionsPage();
+  hintDisableOldAddOn();
 });
