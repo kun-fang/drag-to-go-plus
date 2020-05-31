@@ -27,7 +27,6 @@ browser.runtime.onMessage.addListener(async (data) => {
 });
 
 function processTarget(targetType, currentTab, data, options) {
-  let content = data[targetType];
   let targetOptions = options[targetType];
   let direction = getDragDirection(data, targetOptions.mode);
   let dragOption = targetOptions.actions[direction.name];
@@ -39,6 +38,7 @@ function processTarget(targetType, currentTab, data, options) {
     config.engine = dragOption.engine;
     Object.keys(data).forEach(key => config[key] = data[key]);
     if (!!action) {
+      let content = data[action.target];
       return action.apply(currentTab, content, config);
     }
   }

@@ -10,6 +10,7 @@ export class Action {
     this.isSearch = action.isSearch || false;
     this.actionScript = action.actionScript;
     this.displayFunction = action.display;
+    this.target = action.target;
     actionMap[this.name] = this;
   }
 
@@ -56,6 +57,7 @@ const openLinkAction = new Action({
   name: ActionType.OPEN_LINK,
   openNewTab: true,
   actionScript: actionScriptMap[ActionType.OPEN_LINK],
+  target: TargetType.ANCHOR,
   display: () => "Open the Link"
 });
 
@@ -63,6 +65,7 @@ const saveLinkAction = new Action ({
   name: ActionType.SAVE_LINK,
   openNewTab: false,
   actionScript: actionScriptMap[ActionType.SAVE_LINK],
+  target: TargetType.ANCHOR,
   display : () => "Save the Link"
 });
 
@@ -70,6 +73,7 @@ const openImageAction = new Action({
   name: ActionType.OPEN_IMAGE,
   openNewTab: true,
   actionScript: actionScriptMap[ActionType.OPEN_LINK],
+  target: TargetType.IMAGE,
   display: () => "Open the Image"
 });
 
@@ -77,6 +81,7 @@ const saveImageAction = new Action({
   name: ActionType.SAVE_IMAGE,
   openNewTab: false,
   actionScript: actionScriptMap[ActionType.SAVE_LINK],
+  target: TargetType.IMAGE,
   display: () => "Save the Image"
 });
 
@@ -85,6 +90,7 @@ const textSearchAction = new Action({
   openNewTab: true,
   isSearch: true,
   actionScript: actionScriptMap[ActionType.SEARCH_TEXT],
+  target: TargetType.TEXT,
   display: () => "Search the Text"
 });
 
@@ -93,6 +99,7 @@ const copyTextAction = new Action({
   openNewTab: false,
   isSearch: false,
   actionScript: actionScriptMap[ActionType.COPY_TEXT],
+  target: TargetType.TEXT,
   display: () => "Copy the Text"
 });
 
@@ -101,6 +108,7 @@ const saveTextAction = new Action({
   openNewTab: false,
   isSearch: false,
   actionScript: actionScriptMap[ActionType.SAVE_TEXT],
+  target: TargetType.TEXT,
   display: () => "Save As a Text File"
 })
 
@@ -109,6 +117,7 @@ const findTextInPage = new Action({
   openNewTab: false,
   isSearch: false,
   actionScript: actionScriptMap[ActionType.FIND_IN_PAGE],
+  target: TargetType.TEXT,
   display: () => "Find the Text in Page (Experimental)"
 })
 
@@ -117,6 +126,7 @@ const bookmark = new Action({
   openNewTab: false,
   isSearch: false,
   actionScript: actionScriptMap[ActionType.BOOKMARK_URL],
+  target: TargetType.ANCHOR,
   display: () => "Bookmark the Link"
 })
 
